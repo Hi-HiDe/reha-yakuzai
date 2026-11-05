@@ -1,0 +1,16 @@
+{
+  "name": "リハに活かす薬剤ナビ",
+  "short_name": "薬剤ナビ",
+  "description": "リハ職向け：薬効・半減期・副作用を、介入前後の観察と判断につなげる参照ツール",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f6f6",
+  "theme_color": "#0e7c74",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

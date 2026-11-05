@@ -1,0 +1,11 @@
+// Cloudflare Workers の設定。public フォルダだけを静的ファイルとして公開する（Excel・tools・書籍PDFは公開しない）。
+{
+  "name": "reha-yakuzai",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "single-page-application"
+  }
+}

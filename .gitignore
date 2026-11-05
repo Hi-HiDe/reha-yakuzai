@@ -1,0 +1,8 @@
+# 書籍PDF（著作物）は送らない
+*.pdf
+# Excel の一時ファイル
+~$*.xlsx
+__pycache__/
+.wrangler/
+node_modules/
+.claude/

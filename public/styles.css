@@ -1,0 +1,413 @@
+/* リハに活かす薬剤ナビ
+   色はすべて :root のトークンで定義し、ダークモードで差し替える。図（figures*.js）も同じトークンを使う。
+   配色の考え方（2026-11-05）：薬の「難しさ」を和らげる、あたたかく明るい配色。
+   薬＝むらさき、体の変化＝オレンジ、患者さんのそばで見ること＝みどり（ブランド色）で、カードと図をそろえる。
+   分野ごとに色とアイコンを持たせ、一覧で見分けやすく、楽しく選べるようにする。 */
+:root {
+  --bg: #fbf7f0;
+  --surface: #ffffff;
+  --surface-2: #f6f0e7;
+  --ink: #2a2522;
+  --ink-2: #5b524a;
+  --ink-3: #887e74;
+  --line: #ebe2d5;
+  --brand: #0c9483;
+  --brand-ink: #ffffff;
+  --brand-soft: #dcf4ee;
+  --accent: #ff8a5c;      /* 楽しさの差し色（見出し下線・バッジ） */
+  --accent-soft: #fff0e8;
+  --focus: #2f6fde;
+
+  /* 意味の色（図とカードで共通） */
+  --drug: #7353e0;        /* 薬 */
+  --drug-soft: #efeafe;
+  --body: #e4632b;        /* 体の変化 */
+  --body-soft: #fff0e6;
+  --rehab: #0c9483;       /* 患者さんのそばで見ること */
+  --rehab-soft: #dcf4ee;
+  --inhibit: #d93535;     /* 抑制 ⊣ */
+  --promote: #2f9447;     /* 促進 → */
+  --neutral: #9a9086;
+
+  /* 分野の色 */
+  --f-cv: #e8506a;  --f-cv-soft: #fde8ec;
+  --f-at: #d9453b;  --f-at-soft: #fde9e7;
+  --f-dm: #3b82f6;  --f-dm-soft: #e5efff;
+  --f-cns: #8b5cf6; --f-cns-soft: #f0eaff;
+  --f-pain: #f08c00; --f-pain-soft: #fff1dc;
+  --f-onc: #0ea5a4; --f-onc-soft: #dcf5f4;
+  --f-imm: #2f9e44; --f-imm-soft: #e3f5e6;
+  --f-abx: #1c9cc7; --f-abx-soft: #def3fa;
+
+  /* リスクタグ */
+  --t-fall: #c2610b;  --t-fall-soft: #fff0dc;
+  --t-bp: #7c3aed;    --t-bp-soft: #f1e9ff;
+  --t-hr: #cf2a6b;    --t-hr-soft: #fde6ef;
+  --t-bleed: #d32f2f; --t-bleed-soft: #fde7e7;
+  --t-glu: #2563eb;   --t-glu-soft: #e4ecff;
+  --t-cns: #0f8a7e;   --t-cns-soft: #dcf3ef;
+  --t-gen: #5f5750;   --t-gen-soft: #efeae4;
+  --t-inf: #2f8a3e;   --t-inf-soft: #e3f4e5;
+  --t-lyte: #0b77b3;  --t-lyte-soft: #e0f1fb;
+  --t-msk: #96602d;   --t-msk-soft: #f7ebde;
+  --t-resp: #4a45d1;  --t-resp-soft: #e8e8fd;
+
+  --band-peak: rgba(217, 53, 53, 0.18);
+  --band-mid: rgba(240, 140, 0, 0.11);
+  --band-low: rgba(12, 148, 131, 0.10);
+
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(60, 40, 20, .05), 0 4px 14px rgba(60, 40, 20, .06);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15130f; --surface: #201d18; --surface-2: #2a2620; --ink: #f2ece4; --ink-2: #c9bfb3; --ink-3: #998f84;
+    --line: #3a342c; --brand: #3fc9b4; --brand-ink: #07211d; --brand-soft: #173a34; --accent: #ff9e78; --accent-soft: #3a261d; --focus: #7aa7f5;
+    --drug: #ab95ff; --drug-soft: #2b2545; --body: #ff9a66; --body-soft: #3c2619; --rehab: #4fd3bf; --rehab-soft: #163631;
+    --inhibit: #ff7a7a; --promote: #6fcf7f; --neutral: #847a70;
+    --f-cv: #ff8096; --f-cv-soft: #3d1f26; --f-at: #ff8a80; --f-at-soft: #3d2020; --f-dm: #7fb0ff; --f-dm-soft: #1d2a42;
+    --f-cns: #b79bff; --f-cns-soft: #2b2445; --f-pain: #ffb84d; --f-pain-soft: #3b2c15; --f-onc: #4fd6d4; --f-onc-soft: #153534;
+    --f-imm: #73d384; --f-imm-soft: #1b3321; --f-abx: #6cc8ec; --f-abx-soft: #15313d;
+    --t-fall: #ffb066; --t-fall-soft: #3b2a17; --t-bp: #c1a3ff; --t-bp-soft: #2c2445; --t-hr: #ff86b4; --t-hr-soft: #3d1d2c;
+    --t-bleed: #ff8080; --t-bleed-soft: #3e1e1e; --t-glu: #8eb3ff; --t-glu-soft: #1d2945; --t-cns: #56d0c2; --t-cns-soft: #163430;
+    --t-gen: #c2b8ad; --t-gen-soft: #2c2822; --t-inf: #7fd38a; --t-inf-soft: #1c3421; --t-lyte: #6fc2ef; --t-lyte-soft: #152e3e;
+    --t-msk: #e0ad7c; --t-msk-soft: #37291c; --t-resp: #aaadff; --t-resp-soft: #24264b;
+    --band-peak: rgba(255, 122, 122, 0.24); --band-mid: rgba(255, 184, 77, 0.12); --band-low: rgba(79, 211, 191, 0.12);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15130f; --surface: #201d18; --surface-2: #2a2620; --ink: #f2ece4; --ink-2: #c9bfb3; --ink-3: #998f84;
+  --line: #3a342c; --brand: #3fc9b4; --brand-ink: #07211d; --brand-soft: #173a34; --accent: #ff9e78; --accent-soft: #3a261d; --focus: #7aa7f5;
+  --drug: #ab95ff; --drug-soft: #2b2545; --body: #ff9a66; --body-soft: #3c2619; --rehab: #4fd3bf; --rehab-soft: #163631;
+  --inhibit: #ff7a7a; --promote: #6fcf7f; --neutral: #847a70;
+  --f-cv: #ff8096; --f-cv-soft: #3d1f26; --f-at: #ff8a80; --f-at-soft: #3d2020; --f-dm: #7fb0ff; --f-dm-soft: #1d2a42;
+  --f-cns: #b79bff; --f-cns-soft: #2b2445; --f-pain: #ffb84d; --f-pain-soft: #3b2c15; --f-onc: #4fd6d4; --f-onc-soft: #153534;
+  --f-imm: #73d384; --f-imm-soft: #1b3321; --f-abx: #6cc8ec; --f-abx-soft: #15313d;
+  --t-fall: #ffb066; --t-fall-soft: #3b2a17; --t-bp: #c1a3ff; --t-bp-soft: #2c2445; --t-hr: #ff86b4; --t-hr-soft: #3d1d2c;
+  --t-bleed: #ff8080; --t-bleed-soft: #3e1e1e; --t-glu: #8eb3ff; --t-glu-soft: #1d2945; --t-cns: #56d0c2; --t-cns-soft: #163430;
+  --t-gen: #c2b8ad; --t-gen-soft: #2c2822; --t-inf: #7fd38a; --t-inf-soft: #1c3421; --t-lyte: #6fc2ef; --t-lyte-soft: #152e3e;
+  --t-msk: #e0ad7c; --t-msk-soft: #37291c; --t-resp: #aaadff; --t-resp-soft: #24264b;
+  --band-peak: rgba(255, 122, 122, 0.24); --band-mid: rgba(255, 184, 77, 0.12); --band-low: rgba(79, 211, 191, 0.12);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .45);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  font-size: 16px; line-height: 1.65;
+  padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+a { color: var(--brand); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+/* ヘッダー */
+.topbar {
+  position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 10px 16px; padding-top: calc(10px + env(safe-area-inset-top));
+  background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 17px; }
+.sel-badge {
+  text-decoration: none; background: var(--brand); color: var(--brand-ink); border-radius: 999px; padding: 4px 12px; font-size: 14px; font-weight: 600;
+}
+
+main { max-width: 860px; margin: 0 auto; padding: 16px; outline: none; }
+.footer { max-width: 860px; margin: 8px auto 24px; padding: 0 16px; color: var(--ink-3); font-size: 13px; }
+.footer p { margin: 4px 0; }
+
+/* 下のタブ */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex;
+  background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar a {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 7px 0 6px;
+  font-size: 11.5px; color: var(--ink-3); text-decoration: none;
+}
+.tabbar svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.tabbar a.on { color: var(--brand); font-weight: 700; }
+.tabbar a.on svg { stroke-width: 2.2; }
+
+/* 共通部品 */
+h1 { font-size: 22px; line-height: 1.35; margin: 4px 0 4px; }
+h2 { font-size: 17px; margin: 0 0 10px; }
+.sub { color: var(--ink-2); font-size: 14px; margin: 0 0 14px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin: 0 0 14px; box-shadow: var(--shadow); }
+.muted { color: var(--ink-3); }
+.small { font-size: 13.5px; }
+.empty { color: var(--ink-3); font-size: 14px; padding: 6px 0; }
+
+.search {
+  display: flex; align-items: center; gap: 8px; background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 0 12px;
+}
+.search:focus-within { border-color: var(--brand); }
+.search svg { width: 20px; height: 20px; stroke: var(--ink-3); fill: none; stroke-width: 2; flex: none; }
+.search input { flex: 1; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 17px; padding: 12px 0; outline: none; min-width: 0; }
+
+.results { margin-top: 8px; }
+.res {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 12px; text-decoration: none; color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+.res:last-child { border-bottom: 0; }
+.res .r-main { font-weight: 600; }
+.res .r-sub { color: var(--ink-3); font-size: 13px; }
+.res .chev { color: var(--ink-3); flex: none; }
+
+/* タグ */
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 600;
+  text-decoration: none; border: 1px solid transparent; line-height: 1.3;
+}
+.tag .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.tag.sm { padding: 3px 9px; font-size: 12.5px; }
+.tag.fall { color: var(--t-fall); background: var(--t-fall-soft); }
+.tag.bp { color: var(--t-bp); background: var(--t-bp-soft); }
+.tag.hr { color: var(--t-hr); background: var(--t-hr-soft); }
+.tag.bleed { color: var(--t-bleed); background: var(--t-bleed-soft); }
+.tag.glu { color: var(--t-glu); background: var(--t-glu-soft); }
+.tag.cns { color: var(--t-cns); background: var(--t-cns-soft); }
+.tag.gen { color: var(--t-gen); background: var(--t-gen-soft); }
+.tag.inf { color: var(--t-inf); background: var(--t-inf-soft); }
+.tag.lyte { color: var(--t-lyte); background: var(--t-lyte-soft); }
+.tag.msk { color: var(--t-msk); background: var(--t-msk-soft); }
+.tag.resp { color: var(--t-resp); background: var(--t-resp-soft); }
+
+/* 群の一覧 */
+.field { margin: 0 0 16px; }
+.field h2 { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 14px; letter-spacing: .04em; margin-bottom: 8px; }
+.glist { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.gcard {
+  display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-decoration: none; color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.gcard:hover { border-color: var(--brand); }
+.gcard .g-name { font-weight: 700; font-size: 16px; }
+.gcard .g-ex { color: var(--ink-3); font-size: 13px; margin: 2px 0 8px; }
+.gcard.soon { box-shadow: none; background: transparent; border-style: dashed; color: var(--ink-3); pointer-events: none; }
+.gcard.soon .g-name { font-weight: 600; }
+
+/* カード詳細 */
+.crumb { font-size: 13px; color: var(--ink-3); margin: 0 0 2px; }
+.card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.card-actions { display: flex; gap: 8px; flex: none; }
+.iconbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; height: 44px; padding: 0 12px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink-2);
+}
+.iconbtn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.iconbtn.on { color: #d48806; border-color: #f0c96a; background: #fff7e0; }
+.iconbtn.on svg { fill: currentColor; }
+.iconbtn.sel.on { color: var(--brand-ink); background: var(--brand); border-color: var(--brand); }
+.iconbtn.sel.on svg { fill: none; }
+:root[data-theme="dark"] .iconbtn.on:not(.sel) { background: #3a2f12; border-color: #7a5c14; color: #f5c451; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .iconbtn.on:not(.sel) { background: #3a2f12; border-color: #7a5c14; color: #f5c451; } }
+
+.sec { margin: 0 0 14px; }
+.sec-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; margin: 0 0 10px; }
+.sec-title .num {
+  display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--brand); color: var(--brand-ink); font-size: 12.5px; flex: none;
+}
+.sec ul { margin: 0; padding-left: 1.25em; }
+.sec li { margin: 0 0 6px; }
+.sec li::marker { color: var(--ink-3); }
+
+.points { list-style: none; padding: 0 !important; display: grid; gap: 8px; }
+.points li { margin: 0 !important; background: var(--rehab-soft); border-radius: 10px; padding: 10px 12px; }
+.points .ph { display: block; color: var(--rehab); font-weight: 700; }
+.points li b { color: var(--ink); background: linear-gradient(transparent 60%, color-mix(in srgb, var(--rehab) 22%, transparent) 60%); }
+.panel.key { border-left: 5px solid var(--rehab); }
+
+.report li { padding-left: 2px; }
+.lab-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13.5px; margin-left: 4px; white-space: nowrap; }
+
+/* 図 */
+.fig { width: 100%; overflow: hidden; }
+.fig svg { display: block; width: 100%; height: auto; }
+.fig-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-2); margin-top: 8px; }
+.fig-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.fig-legend i { display: inline-block; width: 18px; height: 0; border-top: 2.5px solid; position: relative; }
+.flow { list-style: none; padding: 0 !important; margin: 0 0 14px !important; display: grid; grid-template-columns: 1fr; gap: 22px; }
+.fl { position: relative; margin: 0 !important; border-radius: 12px; padding: 10px 12px; border: 1.5px solid; }
+.fl-k { display: block; font-size: 12px; font-weight: 800; letter-spacing: .06em; margin-bottom: 2px; }
+.fl-t { display: block; font-size: 14.5px; line-height: 1.5; color: var(--ink); }
+.fl.drug { background: var(--drug-soft); border-color: var(--drug); } .fl.drug .fl-k { color: var(--drug); }
+.fl.body { background: var(--body-soft); border-color: var(--body); } .fl.body .fl-k { color: var(--body); }
+.fl.rehab { background: var(--rehab-soft); border-color: var(--rehab); } .fl.rehab .fl-k { color: var(--rehab); }
+.fl + .fl::before {
+  content: ""; position: absolute; left: 50%; top: -18px; width: 12px; height: 12px; margin-left: -6px;
+  border-right: 3px solid var(--ink-3); border-bottom: 3px solid var(--ink-3); transform: rotate(45deg);
+}
+@media (min-width: 640px) {
+  .flow { grid-template-columns: 1fr 1fr 1fr; gap: 26px; }
+  .fl + .fl::before { left: -19px; top: 50%; margin: -6px 0 0; transform: rotate(-45deg); }
+}
+.mech-note { font-size: 14.5px; color: var(--ink-2); margin: 10px 0 0; }
+
+/* 時間の帯グラフ */
+.drug-pick { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.chip {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: 13.5px; cursor: pointer; color: var(--ink-2);
+}
+.chip.on { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 600; }
+.tl-facts { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--ink-2); margin: 8px 0 0; }
+.tl-facts b { color: var(--ink); }
+.tl-bands { list-style: none; padding: 0 !important; margin: 10px 0 0 !important; display: grid; gap: 6px; }
+.tl-bands li { display: flex; gap: 10px; align-items: baseline; margin: 0 !important; font-size: 14px; }
+.tl-bands .sw { flex: none; width: 14px; height: 14px; border-radius: 4px; transform: translateY(4px); }
+.tl-bands .tm { display: block; font-weight: 700; font-size: 13px; color: var(--ink-2); }
+
+/* 個別薬の表 */
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; }
+table.drugs { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 520px; }
+table.drugs th, table.drugs td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.drugs th { font-size: 12.5px; color: var(--ink-3); font-weight: 600; white-space: nowrap; }
+table.drugs td.nm b { display: block; }
+table.drugs td.nm span { color: var(--ink-3); font-size: 12.5px; }
+table.drugs tr.hl td { background: var(--brand-soft); }
+/* スマホ幅では表を薬ごとのカードにする（横スクロールさせない） */
+@media (max-width: 599px) {
+  .tbl-wrap { overflow: visible; margin: 0; }
+  table.drugs { min-width: 0; }
+  table.drugs thead { display: none; }
+  table.drugs tr { display: block; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 0 0 10px; }
+  table.drugs tr.hl { background: var(--brand-soft); border-color: var(--brand); }
+  table.drugs tr.hl td { background: transparent; }
+  table.drugs td { display: grid; grid-template-columns: 5.2em 1fr; gap: 8px; border: 0; padding: 3px 0; }
+  table.drugs td.nm { display: block; padding-bottom: 6px; }
+  table.drugs td.nm b { display: inline; font-size: 16px; margin-right: 6px; }
+  table.drugs td[data-l]::before { content: attr(data-l); color: var(--ink-3); font-size: 12.5px; padding-top: 1px; }
+  table.drugs td.empty-cell { display: none; }
+}
+
+details.src summary { cursor: pointer; font-weight: 700; font-size: 15px; }
+details.src ol { padding-left: 1.4em; font-size: 13.5px; color: var(--ink-2); }
+details.src li { margin: 0 0 6px; word-break: break-all; }
+
+.notice {
+  font-size: 13.5px; color: var(--ink-2); background: var(--surface-2); border-radius: 10px; padding: 10px 12px; margin: 0 0 14px;
+}
+
+/* 選択中（リスクの重なり） */
+.overlap { display: grid; gap: 8px; }
+.ov-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); }
+.ov-row.multi { outline: 2px solid currentColor; outline-offset: -2px; }
+.ov-count { font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; }
+.ov-from { font-size: 12.5px; color: var(--ink-3); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 12px;
+  background: var(--brand); color: var(--brand-ink); border: 0; font-weight: 700; cursor: pointer; text-decoration: none;
+}
+.btn.ghost { background: var(--surface); color: var(--ink-2); border: 1px solid var(--line); }
+
+/* クイズ */
+.scene { font-size: 16px; background: var(--surface-2); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; }
+.scene .who { font-size: 13px; color: var(--ink-3); display: block; margin-bottom: 4px; }
+.choices { display: grid; gap: 8px; }
+.choice {
+  text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; font-size: 15.5px; line-height: 1.5;
+}
+.choice:hover:not([disabled]) { border-color: var(--brand); }
+.choice.ok { border-color: var(--promote); background: color-mix(in srgb, var(--promote) 10%, var(--surface)); }
+.choice.ng { border-color: var(--inhibit); background: color-mix(in srgb, var(--inhibit) 8%, var(--surface)); }
+.choice[disabled] { cursor: default; }
+.explain { margin-top: 12px; border-left: 4px solid var(--brand); padding: 8px 12px; background: var(--brand-soft); border-radius: 0 10px 10px 0; }
+.explain p { margin: 0 0 8px; }
+
+@media (min-width: 720px) {
+  h1 { font-size: 26px; }
+  .tabbar { justify-content: center; }
+  .tabbar a { flex: 0 0 120px; }
+}
+
+/* ===== 楽しく・患者さんにつながる見た目（2026-11-05） ===== */
+/* 分野の色を --fc に入れて、カード・見出しで共通に使う */
+.f-cv { --fc: var(--f-cv); --fc-soft: var(--f-cv-soft); }
+.f-at { --fc: var(--f-at); --fc-soft: var(--f-at-soft); }
+.f-dm { --fc: var(--f-dm); --fc-soft: var(--f-dm-soft); }
+.f-cns { --fc: var(--f-cns); --fc-soft: var(--f-cns-soft); }
+.f-pain { --fc: var(--f-pain); --fc-soft: var(--f-pain-soft); }
+.f-onc { --fc: var(--f-onc); --fc-soft: var(--f-onc-soft); }
+.f-imm { --fc: var(--f-imm); --fc-soft: var(--f-imm-soft); }
+.f-abx { --fc: var(--f-abx); --fc-soft: var(--f-abx-soft); }
+
+.ficon {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; width: 30px; height: 30px; border-radius: 10px;
+  background: var(--fc-soft, var(--accent-soft)); font-size: 17px; line-height: 1; margin-right: 8px;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+
+/* ホームの見出し */
+.hero {
+  position: relative; overflow: hidden; border-radius: 22px; padding: 18px 18px 16px; margin: 0 0 16px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 55%),
+    radial-gradient(120% 140% at 0% 100%, color-mix(in srgb, var(--brand) 20%, transparent) 0%, transparent 60%),
+    var(--surface);
+  border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.hero h1 { margin: 2px 0 6px; }
+.hero-kicker { margin: 0; font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: .04em; }
+:root[data-theme="dark"] .hero-kicker { color: var(--accent); }
+.hero-sub { margin: 0 0 12px; color: var(--ink-2); font-size: 14.5px; }
+.hero-sub b { color: var(--rehab); }
+.hero-chips { display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; }
+.hc { border-radius: 999px; padding: 4px 9px; font-size: 12.5px; font-weight: 700; border: 1.5px solid; white-space: nowrap; }
+.hc.drug { color: var(--drug); background: var(--drug-soft); border-color: var(--drug); }
+.hc.body { color: var(--body); background: var(--body-soft); border-color: var(--body); }
+.hc.rehab { color: var(--rehab); background: var(--rehab-soft); border-color: var(--rehab); }
+.hc-arrow { color: var(--ink-3); font-weight: 800; }
+
+/* 分野チップ（ホーム） */
+.fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.fchip {
+  display: flex; align-items: center; padding: 10px 12px; border-radius: 14px; text-decoration: none; color: var(--ink); font-weight: 700; font-size: 14.5px;
+  background: var(--surface); border: 1px solid var(--line); border-bottom: 3px solid var(--fc); box-shadow: var(--shadow);
+}
+.fchip:hover { background: var(--fc-soft); }
+
+/* 群カード：左に分野の色 */
+.gcard { position: relative; border-left: 5px solid var(--fc, var(--brand)); border-radius: 14px; }
+.gcard .g-name { display: flex; align-items: center; }
+.gcard:hover { border-color: var(--fc, var(--brand)); background: color-mix(in srgb, var(--fc, var(--brand)) 5%, var(--surface)); }
+.gcard.quizcard { --fc: var(--accent); --fc-soft: var(--accent-soft); background: linear-gradient(135deg, var(--accent-soft), var(--surface) 70%); }
+
+/* 薬効群一覧の見出し */
+.field h2 { color: var(--ink); font-size: 16px; letter-spacing: 0; }
+.fcount { margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--fc); background: var(--fc-soft); border-radius: 999px; padding: 1px 8px; }
+
+/* カード詳細の見出し帯 */
+.card-hero {
+  margin: 0 0 14px; padding: 12px 14px 14px; border-radius: 18px;
+  background: linear-gradient(135deg, var(--fc-soft), var(--surface) 75%); border: 1px solid var(--line); border-top: 4px solid var(--fc);
+}
+.card-hero .crumb a { display: inline-flex; align-items: center; color: var(--ink-2); text-decoration: none; font-weight: 700; }
+.card-hero .crumb .ficon { width: 24px; height: 24px; font-size: 14px; margin-right: 6px; background: var(--surface); }
+
+/* 「患者さんのそばで見るポイント」を一番目立たせる */
+.panel.key { border-left: 0; border: 2px solid var(--rehab); background: linear-gradient(180deg, var(--rehab-soft), var(--surface) 120px); }
+.panel.key .sec-title::after { content: "🧑‍⚕️"; margin-left: auto; font-size: 20px; font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+.points li { background: var(--surface); border: 1px solid color-mix(in srgb, var(--rehab) 30%, var(--line)); }
+
+/* 見出しの番号 */
+.sec-title .num { background: var(--brand); }
+.panel.key .sec-title .num { background: var(--rehab); }
+
+/* 下のタブの選択中 */
+.tabbar a.on { position: relative; }
+.tabbar a.on::before { content: ""; position: absolute; top: 0; left: 30%; right: 30%; height: 3px; border-radius: 0 0 3px 3px; background: var(--brand); }
+
+/* クイズ */
+.scene { background: linear-gradient(135deg, var(--accent-soft), var(--surface-2)); border: 1px solid var(--line); }
+.scene .who::before { content: "🧓 "; font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
