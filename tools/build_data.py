@@ -189,7 +189,7 @@ def main():
         for n in range(1, 5):
             c = text(r.get("選択肢%d" % n))
             if c:
-                choices.append({"t": c, "ok": False})
+                choices.append({"t": c, "ok": False, "why": text(r.get("選択肢%dの理由" % n))})
         ans = number(r.get("正解番号"))
         if ans in (None, "NG") or not (1 <= ans <= len(choices)):
             err("学習問題", i, "正解番号が選択肢の範囲にありません")

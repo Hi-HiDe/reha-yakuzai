@@ -411,3 +411,6 @@ details.src li { margin: 0 0 6px; word-break: break-all; }
 /* クイズ */
 .scene { background: linear-gradient(135deg, var(--accent-soft), var(--surface-2)); border: 1px solid var(--line); }
 .scene .who::before { content: "🧓 "; font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+
+.choice .why { display: block; margin-top: 6px; font-size: 13.5px; color: var(--ink-2); font-weight: 400; }
+.choice.ok .why { color: color-mix(in srgb, var(--promote) 80%, var(--ink)); }

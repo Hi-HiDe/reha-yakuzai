@@ -215,10 +215,10 @@
     return esc(s).replace(/(https?:\/\/[^\s）)]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
   }
 
-  // 薬 → 体の変化 → リハで見ること の流れ（幅が狭いときは縦に並ぶ）
+  // 薬 → 体の変化 → 患者さんのそばで見ること の流れ（幅が狭いときは縦に並ぶ）
   function flowHtml(g) {
     if (!g.flow || !g.flow.length) return "";
-    var label = { drug: "薬", body: "体の変化", rehab: "リハで見ること" };
+    var label = { drug: "薬", body: "体の変化", rehab: "患者さんのそばで見ること" };
     return '<ol class="flow">' + g.flow.map(function (s) {
       return '<li class="fl ' + esc(s.k) + '"><span class="fl-k">' + esc(label[s.k] || "") + '</span><span class="fl-t">' + fmt(s.t) + "</span></li>";
     }).join("") + "</ol>";
@@ -229,7 +229,7 @@
     if (!f) return flowHtml(g);
     return flowHtml(g) + '<div class="fig" role="img" aria-label="' + esc(f.alt) + '">' + f.svg + "</div>" +
       '<div class="fig-legend"><span><i style="border-color:var(--promote)"></i>促す・増える</span><span><i style="border-color:var(--inhibit)"></i>抑える（⊣）</span>' +
-      '<span><b style="color:var(--drug)">■</b> 薬</span><span><b style="color:var(--body)">■</b> 体の変化</span><span><b style="color:var(--rehab)">■</b> リハで見ること</span></div>';
+      '<span><b style="color:var(--drug)">■</b> 薬</span><span><b style="color:var(--body)">■</b> 体の変化</span><span><b style="color:var(--rehab)">■</b> 患者さんのそばで見ること</span></div>';
   }
 
   function drugTable(drugs, drugId) {
@@ -419,7 +419,12 @@
         var exp = document.getElementById("exp");
         exp.hidden = false;
         exp.className = "explain";
-        exp.innerHTML = "<p><b>" + (picked.ok ? "正解です。" : "ほかにもっと先に確かめたいことがあります。") + "</b></p>" +
+        // 選択肢ごとの理由を、それぞれのボタンの下に出す
+        Array.prototype.forEach.call(main.querySelectorAll(".choice"), function (o, i) {
+          var why = q.choices[i].why;
+          if (why) o.insertAdjacentHTML("beforeend", '<span class="why">' + (q.choices[i].ok ? "◯ " : "✕ ") + fmt(why) + "</span>");
+        });
+        exp.innerHTML = "<p><b>" + (picked.ok ? "正解です。" : "この選択には注意点があります。各選択肢の理由と、下の解説を確かめましょう。") + "</b></p>" +
           q.explain.map(function (p) { return "<p>" + fmt(p) + "</p>"; }).join("") +
           '<p style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0">' +
           (q.related || []).map(function (gid) { return groupById[gid] ? '<a class="btn ghost" href="#g/' + esc(gid) + '">' + esc(groupById[gid].name) + "のカード</a>" : ""; }).join("") +

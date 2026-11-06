@@ -124,7 +124,7 @@
       rect(24, 98, 188, 36, { fill: "var(--surface)", stroke: "var(--ink-2)", sw: 2 }) +
       text(118, 116, "P2Y12受容体（ADP）", { size: 13.5, weight: 700 }) +
       rect(24, 152, 188, 36, { fill: "var(--surface)", stroke: "var(--ink-2)", sw: 2 }) +
-      text(118, 170, "PDE3（分解酵素）", { size: 13.5, weight: 700 }) +
+      text(118, 170, "PDE3（cAMPを分解する酵素）", { size: 13.5, weight: 700 }) +
       // 結果
       arrow("M118 202 V224") + head(118, 226, "d") +
       rect(28, 230, 180, 40, { fill: "var(--body-soft)", stroke: "var(--body)" }) +
