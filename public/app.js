@@ -50,7 +50,66 @@
     });
   }
   // **太字** だけを許す簡易書式
-  function fmt(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
+  // 用語の説明（新人向け）。本文中の用語に点線を付け、押すと画面下に短い説明を出す。説明は一般的な言い換えで、診療の判断基準ではない
+  var GLOSSARY = {
+    "QT延長": "心電図の波形（QT 時間）が延びること。危ない不整脈（心室頻拍など）につながることがある。",
+    "PR間隔": "心電図で、心房から心室へ電気が伝わるまでの時間。延びると心臓の電気の伝わりが遅れている。",
+    "Infusion reaction": "点滴中〜点滴後に出る、発熱・寒気・息苦しさ・血圧低下などの反応。",
+    "骨頭無菌性壊死": "大腿骨頭などの骨への血流が途絶えて骨が壊れること。股関節の痛みで気づくことがある。",
+    "SIADH": "抗利尿ホルモンが出すぎて体に水がたまり、血液のナトリウムが薄くなる状態（低ナトリウム血症）。",
+    "wearing-off": "薬の効いている時間が短くなり、次の服薬の前に症状が悪くなる現象。",
+    "クリーゼ": "重症筋無力症などで、筋力低下が急に進み、呼吸が苦しくなる状態。",
+    "類天疱瘡": "皮膚に水ぶくれ（水疱）ができる病気。DPP-4阻害薬の副作用として知られる。",
+    "レッドネック症候群": "バンコマイシンを速く点滴したときなどに、顔・首・上半身が赤くなり、かゆみや血圧低下が出る反応。",
+    "起座呼吸": "横になると息苦しく、起き上がると楽になる呼吸。心不全のサインのことがある。",
+    "錐体外路症状": "薬で起きる、ふるえ・こわばり・動きにくさ・そわそわ（アカシジア）・体がねじれる（ジストニア）などの症状。",
+    "悪性症候群": "高熱・強いこわばり・意識の変化・発汗などが急に出る、まれだが重い副作用。すぐに報告する。",
+    "横紋筋融解症": "筋肉が壊れて、筋肉の痛み・脱力・赤褐色の尿が出る状態。腎臓を悪くすることがある。",
+    "ジスキネジア": "自分の意思と関係なく、体や手足が勝手に動く症状。",
+    "骨髄抑制": "骨髄で血液がつくられにくくなり、白血球・赤血球・血小板が減ること。感染・貧血・出血が起きやすくなる。",
+    "irAE": "免疫チェックポイント阻害薬で、免疫が自分の臓器を攻撃して起きる副作用（免疫関連有害事象）。",
+    "間質性肺炎": "肺の壁（間質）に炎症が起き、息切れ・空咳・発熱が出る。急に悪くなることがある。",
+    "間質性肺疾患": "肺の壁（間質）に炎症や線維化が起きる病気の総称。息切れ・空咳・発熱が出る。",
+    "乳酸アシドーシス": "血液に乳酸がたまって酸性に傾く重い状態。胃腸症状・だるさ・筋肉痛・速い呼吸が初期症状。",
+    "ケトアシドーシス": "インスリンが足りず、体がケトン体を使って血液が酸性に傾く状態。吐き気・腹痛・だるさ・速い呼吸。",
+    "前向性健忘": "薬を飲んだあとの出来事を覚えていないこと。",
+    "血管性浮腫": "顔・くちびる・舌・のどが急に腫れること。のどが腫れると息がしにくくなり、危ない。",
+    "偽膜性大腸炎": "抗菌薬のあとに起きることがある重い大腸炎。頻回の下痢・腹痛・発熱・血便。",
+    "眼瞼下垂": "まぶたが下がって、目が開けにくくなること。",
+    "Tmax": "薬を飲んでから、血液中の薬の濃さが最も高くなるまでの時間。",
+    "半減期": "血液中の薬の濃さが半分になるまでの時間。",
+    "DOAC": "ワルファリン以外の飲む抗凝固薬（アピキサバン・リバーロキサバン・エドキサバン・ダビガトラン）。",
+    "PT-INR": "血液の固まりにくさを表す検査値。ワルファリンの効き具合を見るのに使う。",
+    "第8脳神経障害": "聞こえと体のバランスをつかさどる神経の障害。耳鳴り・難聴・めまい・ふらつき。"
+  };
+  var GLOSS_RE = new RegExp("(" + Object.keys(GLOSSARY).sort(function (a, b) { return b.length - a.length; })
+    .map(function (k) { return k.replace(/[.*+?^${}()|[\]\\-]/g, "\\$&"); }).join("|") + ")", "g");
+  function gloss(html) {
+    // タグの中（属性）には入れない
+    return html.split(/(<[^>]+>)/).map(function (part) {
+      return part.charAt(0) === "<" ? part : part.replace(GLOSS_RE, '<span class="term" role="button" tabindex="0" data-term="$1">$1</span>');
+    }).join("");
+  }
+  function fmt(s) { return gloss(esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")); }
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest && ev.target.closest(".term");
+    var box = document.getElementById("glossBox");
+    if (!t) { if (box && !ev.target.closest("#glossBox")) box.hidden = true; return; }
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "glossBox";
+      box.setAttribute("role", "dialog");
+      box.setAttribute("aria-live", "polite");
+      document.body.appendChild(box);
+    }
+    var k = t.getAttribute("data-term");
+    box.innerHTML = '<b>' + esc(k) + '</b><p>' + esc(GLOSSARY[k] || "") + '</p><button type="button" class="gloss-close" aria-label="閉じる">閉じる</button>';
+    box.hidden = false;
+    box.querySelector(".gloss-close").addEventListener("click", function () { box.hidden = true; });
+  }, true);
+  window.addEventListener("hashchange", function () { var box = document.getElementById("glossBox"); if (box) box.hidden = true; });
   function norm(s) {
     return String(s || "").normalize("NFKC").toLowerCase()
       .replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); })
