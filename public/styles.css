@@ -425,8 +425,8 @@ details.src li { margin: 0 0 6px; word-break: break-all; }
 #glossBox p { margin: 4px 0 8px; font-size: 14.5px; }
 #glossBox .gloss-close { border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 4px 12px; font-size: 13px; cursor: pointer; color: var(--ink-2); }
 
-/* ホームの「生成AIで作成。」の案内と、このアプリについての共有用の説明文 */
-.notice.home-ai { margin: 14px 0; }
-.notice.home-ai a { color: inherit; font-weight: 700; }
+/* ホームの最下部の「生成AIで作成。」の案内と、このアプリについての共有用の説明文 */
+.home-foot { margin: 28px 0 8px; padding-top: 10px; border-top: 1px solid var(--line); font-size: .8rem; color: var(--ink-3); text-align: center; }
+.home-foot a { color: var(--ink-2); }
 .share-copy { display: grid; gap: 8px; justify-items: start; }
 .share-copy textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 13.5px; line-height: 1.6; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; resize: vertical; }

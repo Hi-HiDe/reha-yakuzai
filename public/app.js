@@ -176,7 +176,6 @@
       '<section class="hero"><p class="hero-kicker">今日の患者さんの薬、リハ前にひと確認</p>' +
       '<h1>どの薬を飲んでいる人？</h1><p class="hero-sub">薬の名前・症状から、<b>患者さんのそばで見ること</b>がわかります。</p>' +
       '<div class="hero-chips"><span class="hc drug">💊 薬</span><span class="hc-arrow">→</span><span class="hc body">🫀 体の変化</span><span class="hc-arrow">→</span><span class="hc rehab">🧑‍⚕️ そばで見ること</span></div></section>' +
-      '<p class="notice home-ai">生成AIで作成。<a href="#about/share">この教材を使う・共有する方へ</a></p>' +
       '<label class="search">' + ICON.search + '<input id="q" type="search" placeholder="例：メインテート、DOAC、ふらつき" autocomplete="off" enterkeyhint="search" aria-label="薬を検索"></label>' +
       '<div class="panel results" id="res" hidden></div>' +
       '<section class="sec" style="margin-top:18px"><h2>分野から探す</h2><div class="fgrid">' + D.fields.filter(function (f) { return D.groups.some(function (g) { return g.field === f.id; }); }).map(function (f) {
@@ -184,7 +183,8 @@
       }).join("") + "</div></section>" +
       '<section class="sec"><h2>症状から探す</h2><div class="tags">' + D.tags.map(function (t) { return tagHtml(t.id); }).join("") + "</div></section>" +
       (rec.length ? '<section class="sec"><h2>最近見たカード</h2><div class="glist">' + rec.map(gcard).join("") + "</div></section>" : "") +
-      '<section class="sec"><h2>場面で考える</h2><a class="gcard quizcard" href="#quiz"><div class="g-name"><span class="ficon" aria-hidden="true">🎯</span><span>場面クイズ</span></div><div class="g-ex">「この患者さん、リハの前に何を確かめる？」を架空の場面で練習（' + D.quizzes.length + "問）</div></a></section>";
+      '<section class="sec"><h2>場面で考える</h2><a class="gcard quizcard" href="#quiz"><div class="g-name"><span class="ficon" aria-hidden="true">🎯</span><span>場面クイズ</span></div><div class="g-ex">「この患者さん、リハの前に何を確かめる？」を架空の場面で練習（' + D.quizzes.length + "問）</div></a></section>" +
+      '<p class="home-foot">生成AIで作成。<a href="#about/share">この教材を使う・共有する方へ</a></p>';
     var q = document.getElementById("q"), res = document.getElementById("res");
     q.addEventListener("input", function () {
       var v = q.value.trim();
