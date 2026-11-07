@@ -184,7 +184,7 @@
       '<section class="sec"><h2>症状から探す</h2><div class="tags">' + D.tags.map(function (t) { return tagHtml(t.id); }).join("") + "</div></section>" +
       (rec.length ? '<section class="sec"><h2>最近見たカード</h2><div class="glist">' + rec.map(gcard).join("") + "</div></section>" : "") +
       '<section class="sec"><h2>場面で考える</h2><a class="gcard quizcard" href="#quiz"><div class="g-name"><span class="ficon" aria-hidden="true">🎯</span><span>場面クイズ</span></div><div class="g-ex">「この患者さん、リハの前に何を確かめる？」を架空の場面で練習（' + D.quizzes.length + "問）</div></a></section>" +
-      '<p class="home-foot">生成AIで作成。<a href="#about/share">この教材を使う・共有する方へ</a></p>';
+      '<p class="home-foot"><a href="#about/share">この教材を使う・共有する方へ</a></p>';
     var q = document.getElementById("q"), res = document.getElementById("res");
     q.addEventListener("input", function () {
       var v = q.value.trim();
