@@ -176,6 +176,7 @@
       '<section class="hero"><p class="hero-kicker">今日の患者さんの薬、リハ前にひと確認</p>' +
       '<h1>どの薬を飲んでいる人？</h1><p class="hero-sub">薬の名前・症状から、<b>患者さんのそばで見ること</b>がわかります。</p>' +
       '<div class="hero-chips"><span class="hc drug">💊 薬</span><span class="hc-arrow">→</span><span class="hc body">🫀 体の変化</span><span class="hc-arrow">→</span><span class="hc rehab">🧑‍⚕️ そばで見ること</span></div></section>' +
+      '<p class="notice home-ai">生成AIで作成した学習用のアプリ（ツール）です。<b>専門職による監修は受けていません。</b>使う前・共有する前に「<a href="#about/share">この教材を使う・共有する方へ</a>」を読んでください。</p>' +
       '<label class="search">' + ICON.search + '<input id="q" type="search" placeholder="例：メインテート、DOAC、ふらつき" autocomplete="off" enterkeyhint="search" aria-label="薬を検索"></label>' +
       '<div class="panel results" id="res" hidden></div>' +
       '<section class="sec" style="margin-top:18px"><h2>分野から探す</h2><div class="fgrid">' + D.fields.filter(function (f) { return D.groups.some(function (g) { return g.field === f.id; }); }).map(function (f) {
@@ -514,13 +515,47 @@
   }
 
   // ---------- このアプリについて ----------
-  function viewAbout() {
+  // 「この教材を使う・共有する方へ」（このアプリについて の中。#about/share）
+  function shareHtml() {
+    var url = location.origin + location.pathname;
+    var text = "「リハに活かす薬剤ナビ」（学習・参照用のウェブアプリ）\n" +
+      "URL：" + url + "\n" +
+      "・リハ職（PT・OT・ST）向けに、薬の作用・時間（Tmax・半減期）・副作用を、介入前後の観察につなげて学ぶアプリです（薬効群カード・症状からの逆引き・場面クイズ）。\n" +
+      "・生成AIを用いて作成したもので、医師・薬剤師など専門職による監修は受けていません。誤りが含まれることがあります。\n" +
+      "・学習用の一般的な情報です。用量・中止・変更は扱いません。実際の判断は、医師の指示と院内の基準・プロトコルにもとづいて行い、迷うときは医師・薬剤師に確認してください。院内のルールと違う場合は、院内のルールを優先してください。\n" +
+      "・特定の病院・法人の公式の教材や手順書ではありません。\n" +
+      "・検索欄に、患者さんの情報（氏名・ID・日付など）は入れないでください。検索した文字は保存も送信もされません。\n" +
+      "・URL は職員の間だけで共有し、外部の公開の場には載せないでください。\n" +
+      "・詳しくは、アプリの画面下の「出典・このアプリについて」の「この教材を使う・共有する方へ」をご覧ください。";
+    return '<section class="panel" id="share"><h2>この教材を使う・共有する方へ</h2>' +
+      '<p>職場や研修でこのアプリを紹介・共有するときは、次の点を一緒に伝えてください。下の「共有用の説明文」をコピーして使えます。</p><ul>' +
+      '<li><b>AI で作成</b>：カードの文章・図・場面クイズ・用語の説明は、生成AIを用いて作成しました。作成の過程の見直しも AI が専門職の立場を想定して行ったもので、<b>医師・薬剤師など専門職による監修は受けていません</b>。</li>' +
+      '<li><b>正しさの確認</b>：誤りや古い情報が含まれることがあります。研修などで使う前に、資格を持つ担当者が各カードの出典（添付文書・ガイドライン）と照らし合わせてください。とくに、報告の目安と中止基準、個別の薬の Tmax・半減期・排泄、主な副作用は、最新の添付文書での確認をおすすめします。時間の図は Tmax と半減期から描いた模式図で、用語の説明は一般的な言い換えです。</li>' +
+      '<li><b>臨床での判断</b>：学習用の一般的な情報です。用量の調整、薬の中止・変更、特定の患者への推奨は扱いません。介入の可否や中止の判断は、医師の指示と院内の基準・プロトコルにもとづいて、資格を持つ担当者が行ってください。判断に迷うときは医師・薬剤師に確認してください。</li>' +
+      '<li><b>公式の教材ではない</b>：特定の病院・法人の公式の教材や手順書ではありません。院内のルールと違うときは、院内のルールを優先してください。</li>' +
+      '<li><b>著作権</b>：出典の文章・図・表は転載せず、要約とリンクにとどめています。出典は各カードの末尾にあります。図はこのアプリのために作成した模式図で、外部の画像は使っていません。このアプリの文章や図を別の資料に使うときは、出典も一緒に示してください。</li>' +
+      '<li><b>個人情報</b>：検索欄に、患者さんの氏名・ID・日付などは入れないでください。患者さんの情報を入れる欄はありません。</li>' +
+      '<li><b>共有の範囲</b>：URL を知っている人が見られる形で、検索エンジンには載せていません。URL は職員の間で共有し、外部の公開の場（SNS など）には載せないでください。</li></ul>' +
+      '<h3>共有用の説明文</h3><div class="share-copy"><textarea readonly rows="10" aria-label="共有用の説明文">' + esc(text) + '</textarea><button type="button" class="btn ghost" id="shareCopy">説明文をコピー</button></div></section>';
+  }
+
+  function viewAbout(rest) {
     main.innerHTML = '<h1>このアプリについて</h1>' +
-      '<section class="panel"><p>リハ職が、薬の作用・時間・副作用を、介入前後の観察と判断につなげるための院内向け参照ツールです。</p>' +
-      "<ul><li>内容は添付文書・診療ガイドライン・公開文献をもとに作成しています。出典は各カードの末尾にあります。</li>" +
+      '<section class="panel"><p>リハ職が、薬の作用・時間・副作用を、介入前後の観察と判断につなげるための参照・学習用のツールです。</p>' +
+      "<ul><li>生成AIを用いて作成しました。専門職による監修は受けていません（作成の過程の見直しは、AI が専門職の立場を想定して行ったものです）。</li>" +
+      "<li>内容は添付文書・診療ガイドライン・公開文献をもとに作成しています。出典は各カードの末尾にあります。</li>" +
       "<li>用量の調整、薬の中止・変更、特定の患者への推奨は扱いません。判断に迷うときは医師・薬剤師に確認してください。</li>" +
-      "<li>患者の情報は入力できません。お気に入りと最近見たカードだけが、この端末のブラウザ内に保存されます。</li>" +
-      "<li>薬の仕組みの図と時間の図は、院内で作成した模式図です。</li></ul></section>";
+      "<li>患者の情報は入力できません。お気に入りと最近見たカードだけが、この端末のブラウザ内に保存されます。検索した文字や、複数の薬の選択は保存しません。</li>" +
+      "<li>薬の仕組みの図と時間の図は、このアプリのために作成した模式図です。</li></ul></section>" +
+      shareHtml();
+    if (rest === "share") { var sh = document.getElementById("share"); if (sh) setTimeout(function () { sh.scrollIntoView({ block: "start" }); window.scrollBy(0, -64); }, 0); }
+    var cb = document.getElementById("shareCopy");
+    cb.addEventListener("click", function () {
+      var ta = cb.parentNode.querySelector("textarea");
+      var ok = function () { cb.textContent = "コピーしました"; setTimeout(function () { cb.textContent = "説明文をコピー"; }, 1500); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(ok, function () { ta.select(); });
+      else { ta.select(); try { document.execCommand("copy"); ok(); } catch (e) { /* 手で選んでコピーしてもらう */ } }
+    });
   }
 
   // ---------- ルーター ----------
@@ -539,7 +574,7 @@
       case "select": viewSelect(); break;
       case "quiz": h[1] ? viewQuiz(decodeURIComponent(h[1])) : viewQuizList(); break;
       case "fav": viewFav(); break;
-      case "about": viewAbout(); break;
+      case "about": viewAbout(h[1] || ""); break;
       default: viewHome();
     }
     if (!(h[0] === "g" && h[2])) window.scrollTo(0, 0);
