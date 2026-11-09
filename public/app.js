@@ -553,7 +553,28 @@
   }
 
   // ---------- ルーター ----------
+  // ---------- 戻るボタン ----------
+  var visited = []; // このアプリ内で見た画面の順番（ページを開き直すとリセット）
+  function parentOf(h) {
+    if (h[0] === "g") { var g = groupById[decodeURIComponent(h[1] || "")]; return g ? "#groups/" + g.field : "#groups"; }
+    if (h[0] === "quiz" && h[1]) return "#quiz";
+    if (h[0] === "about" && h[1]) return "#about";
+    return "#home";
+  }
+  var backBtn = document.getElementById("backBtn");
+  backBtn.addEventListener("click", function () {
+    if (visited.length > 1) history.back();
+    else location.hash = parentOf((location.hash.slice(1) || "home").split("/"));
+  });
+  function trackBack() {
+    var cur = location.hash || "#home";
+    if (visited.length > 1 && visited[visited.length - 2] === cur) visited.pop(); // 戻った
+    else if (visited[visited.length - 1] !== cur) visited.push(cur);           // 進んだ
+    backBtn.hidden = cur === "#home" || cur === "#";
+  }
+
   function route() {
+    trackBack();
     var h = (location.hash.slice(1) || "home").split("/");
     var tab = { home: "home", groups: "groups", g: "groups", tag: "home", quiz: "quiz", fav: "fav", select: "home", about: "home" }[h[0]] || "home";
     Array.prototype.forEach.call(document.querySelectorAll(".tabbar a"), function (a) {

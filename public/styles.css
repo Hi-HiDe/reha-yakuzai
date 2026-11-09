@@ -430,3 +430,17 @@ details.src li { margin: 0 0 6px; word-break: break-all; }
 .home-foot a { color: var(--ink-2); }
 .share-copy { display: grid; gap: 8px; justify-items: start; }
 .share-copy textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 13.5px; line-height: 1.6; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; resize: vertical; }
+
+/* ヘッダーの「戻る」 */
+.tb-left { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.tb-left .brand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.backbtn {
+  display: inline-flex; align-items: center; gap: 2px; flex: none; height: 36px; padding: 0 10px 0 4px; margin-left: -6px;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+}
+.backbtn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.backbtn:hover { border-color: var(--brand); color: var(--brand); }
+/* 狭い画面では戻るボタンが出ているあいだ、アプリ名のアイコンだけにして幅をあける */
+@media (max-width: 420px) {
+  .backbtn:not([hidden]) + .brand span { display: none; }
+}
