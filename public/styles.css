@@ -486,3 +486,28 @@ details.src li { margin: 0 0 6px; word-break: break-all; }
 @media (max-width: 420px) {
   .backbtn:not([hidden]) + .brand span { display: none; }
 }
+
+/* ホーム（2026-11-14 改）：進み具合・今日の1問・症状から（横長）・分野カードの件数 */
+.hero-progress { align-items: flex-end; }
+.pstat { min-width: 84px; }
+.pstat b small { font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .75); }
+.pbar { display: block; height: 5px; margin-top: 4px; border-radius: 999px; background: rgba(255, 255, 255, .25); overflow: hidden; }
+.pbar > i { display: block; height: 100%; border-radius: inherit; background: #ffd2bf; }
+.daily { margin: 14px 0 12px; border-top: 4px solid var(--accent); }
+.daily-label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 4px; font-size: 13px; font-weight: 800; color: var(--accent); }
+.daily-done { font-size: 12px; font-weight: 700; color: var(--ink-3); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
+.daily-grp { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.daily-title { font-size: 17px; margin: 0 0 10px; }
+.symptom-wide { min-height: 0; gap: 10px; margin: 12px 0; }
+.symptom-wide:hover { transform: none; }
+.sw-head { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+.sw-head > span:nth-child(2) { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.sw-head .entry-icon { margin: 0; flex: none; }
+.sw-head .entry-title { font-size: 18px; }
+.sw-head .chev { color: var(--ink-3); font-size: 22px; }
+.symptom-wide .tag { text-decoration: none; }
+.symptom-wide .tag.more { background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+.entry-fields .entry-card { min-height: 96px; }
+.entry-fields .entry-icon { width: 36px; height: 36px; font-size: 19px; margin-bottom: 6px; }
+.entry-n { position: absolute; top: 12px; right: 12px; font-size: 11.5px; font-weight: 700; color: var(--fc); background: var(--surface); border-radius: 999px; padding: 0 8px; }
+.symptom-wide:active { transform: none; }
