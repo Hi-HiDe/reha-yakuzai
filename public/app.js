@@ -1,5 +1,5 @@
 // リハに活かす薬剤ナビ 本体
-// 画面は URL の # で切り替える：#home / #groups / #g/<群ID> / #tag/<タグID> / #select / #quiz / #quiz/<問題ID> / #fav / #about
+// 画面は URL の # で切り替える：#home / #groups / #g/<群ID> / #tags / #tag/<タグID> / #select / #quiz / #quiz/<問題ID> / #fav / #about
 // 患者情報は扱わない。保存するのはお気に入り（カードID・問題ID）と最近見たカードだけ（端末のブラウザ内）。
 // 複数の薬の選択（#select）は画面を閉じると消える（保存しない）。
 (function () {
@@ -170,27 +170,46 @@
   }
 
   // ---------- ホーム ----------
+  // 構成（2026-11-14、「脳画像から考えるリハ」のホームにそろえた）：見出しの帯 → 検索 → 入口のカード（分野・症状）→ 場面クイズ・お気に入り → 使う・共有する方へ
+  function shortName(s) { return String(s || "").replace(/（.*?）/g, ""); }
   function viewHome() {
     var rec = recent.filter(function (id) { return groupById[id]; });
+    var favN = fav.filter(function (k) { return (k.indexOf("g:") === 0 && groupById[k.slice(2)]) || (k.indexOf("q:") === 0 && quizById[k.slice(2)]); }).length;
+    var fields = D.fields.filter(function (f) { return D.groups.some(function (g) { return g.field === f.id; }); });
     main.innerHTML =
-      '<section class="hero"><p class="hero-kicker">今日の患者さんの薬、リハ前にひと確認</p>' +
-      '<h1>どの薬を飲んでいる人？</h1><p class="hero-sub">薬の名前・症状から、<b>患者さんのそばで見ること</b>がわかります。</p>' +
-      '<div class="hero-chips"><span class="hc drug">💊 薬</span><span class="hc-arrow">→</span><span class="hc body">🫀 体の変化</span><span class="hc-arrow">→</span><span class="hc rehab">🧑‍⚕️ そばで見ること</span></div></section>' +
+      '<section class="hero"><p class="eyebrow">Drugs × Rehabilitation</p>' +
+      "<h1>薬から、<br>リハを考える。</h1>" +
+      '<p class="hero-sub">薬の名前・症状から、患者さんのそばで見ることがわかります。</p>' +
+      '<div class="hero-chips"><span class="hc drug">💊 薬</span><span class="hc-arrow">→</span><span class="hc body">🫀 体の変化</span><span class="hc-arrow">→</span><span class="hc rehab">🧑‍⚕️ そばで見ること</span></div>' +
+      '<div class="hero-stats"><span><b>' + D.groups.length + "</b>薬効群</span><span><b>" + D.drugs.length + "</b>薬</span><span><b>" + D.tags.length + "</b>症状</span><span><b>" + D.quizzes.length + "</b>問</span></div></section>" +
       '<label class="search">' + ICON.search + '<input id="q" type="search" placeholder="例：メインテート、DOAC、ふらつき" autocomplete="off" enterkeyhint="search" aria-label="薬を検索"></label>' +
       '<div class="panel results" id="res" hidden></div>' +
-      '<section class="sec" style="margin-top:18px"><h2>分野から探す</h2><div class="fgrid">' + D.fields.filter(function (f) { return D.groups.some(function (g) { return g.field === f.id; }); }).map(function (f) {
-        return '<a class="fchip f-' + esc(f.id) + '" href="#groups/' + esc(f.id) + '">' + ficon(f.id) + "<span>" + esc(f.name) + "</span></a>";
-      }).join("") + "</div></section>" +
-      '<section class="sec"><h2>症状から探す</h2><div class="tags">' + D.tags.map(function (t) { return tagHtml(t.id); }).join("") + "</div></section>" +
-      (rec.length ? '<section class="sec"><h2>最近見たカード</h2><div class="glist">' + rec.map(gcard).join("") + "</div></section>" : "") +
-      '<section class="sec"><h2>場面で考える</h2><a class="gcard quizcard" href="#quiz"><div class="g-name"><span class="ficon" aria-hidden="true">🎯</span><span>場面クイズ</span></div><div class="g-ex">「この患者さん、リハの前に何を確かめる？」を架空の場面で練習（' + D.quizzes.length + "問）</div></a></section>" +
-      '<p class="home-foot"><a href="#about/share">この教材を使う・共有する方へ</a></p>';
+      (rec.length ? '<a class="memory-link" href="#fav">' + ICON.star + "<span>最近見たカード " + rec.length + "件・お気に入り</span><span class=\"chev\" aria-hidden=\"true\">›</span></a>" : "") +
+      '<div class="entry entry-many">' +
+      '<a class="entry-card e-symptom" href="#tags"><span class="entry-icon" aria-hidden="true">🩺</span><span class="entry-title">症状から</span><span class="entry-sub">' +
+      esc(shortName(D.tags[0] ? D.tags[0].name : "")) + " など" + D.tags.length + "の症状</span></a>" +
+      fields.map(function (f) {
+        var gs = D.groups.filter(function (g) { return g.field === f.id; });
+        return '<a class="entry-card f-' + esc(f.id) + '" href="#groups/' + esc(f.id) + '"><span class="entry-icon" aria-hidden="true">' + (FIELD_ICON[f.id] || "💊") + "</span>" +
+          '<span class="entry-title">' + esc(f.name) + '</span><span class="entry-sub">' + esc(shortName(gs[0].name)) + (gs.length > 1 ? " など" + gs.length + "群" : "") + "</span></a>";
+      }).join("") + "</div>" +
+      '<div class="entry">' +
+      '<a class="entry-card e-quiz" href="#quiz"><span class="entry-icon" aria-hidden="true">🎯</span><span class="entry-title">場面クイズ</span><span class="entry-sub">リハの前に何を確かめる？（' + D.quizzes.length + "問）</span></a>" +
+      '<a class="entry-card e-fav" href="#fav"><span class="entry-icon" aria-hidden="true">⭐</span><span class="entry-title">お気に入り</span><span class="entry-sub">' + (favN ? "保存 " + favN + "件" : "☆ を押したカードと問題") + "</span></a>" +
+      "</div>" +
+      '<p class="home-foot"><a href="#about/share">この教材を使う・共有する方へ</a>　<a href="#about">出典・このアプリについて</a></p>';
     var q = document.getElementById("q"), res = document.getElementById("res");
     q.addEventListener("input", function () {
       var v = q.value.trim();
       res.hidden = !v;
       if (v) res.innerHTML = resultsHtml(search(v));
     });
+  }
+
+  // ---------- 症状の一覧（ホームの「症状から」） ----------
+  function viewTags() {
+    main.innerHTML = '<h1>症状から探す</h1><p class="sub">患者さんに見られる変化から、関係しうる薬効群を探せます。</p>' +
+      '<div class="tags">' + D.tags.map(function (t) { return tagHtml(t.id); }).join("") + "</div>";
   }
 
   // 分野ごとのアイコンと色（styles.css の --f-<分野ID>）
@@ -220,7 +239,7 @@
     var t = tagById[id];
     if (!t) return viewHome();
     var gs = D.groups.filter(function (g) { return g.tags.indexOf(id) >= 0; });
-    main.innerHTML = '<p class="crumb"><a href="#home">ホーム</a> › 症状から探す</p><h1>' + esc(t.name) + "</h1>" +
+    main.innerHTML = '<p class="crumb"><a href="#home">ホーム</a> › <a href="#tags">症状から探す</a></p><h1>' + esc(t.name) + "</h1>" +
       '<p class="sub">' + esc(t.desc) + "</p>" +
       '<p class="sub">この症状に関係しうる薬効群（' + gs.length + "）</p>" +
       '<div class="glist">' + gs.map(function (g) { return gcard(g.id); }).join("") + "</div>";
@@ -272,6 +291,7 @@
       if (i >= 0) selected.splice(i, 1); else selected.push(id);
       updateSelBadge();
       viewGroup(id, drugId);
+      addPageBack();
     });
     bindTimeline(g, drugs);
     if (drugId) {
@@ -452,7 +472,7 @@
       }).join("") + "</div></section>" +
       '<p class="notice">2つ以上重なっている注意点は、介入中の観察を手厚くしてください。気になる組み合わせは、薬剤師・医師に確認してください。</p>';
     main.innerHTML = html;
-    document.getElementById("clr").addEventListener("click", function () { selected = []; updateSelBadge(); viewSelect(); });
+    document.getElementById("clr").addEventListener("click", function () { selected = []; updateSelBadge(); viewSelect(); addPageBack(); });
   }
 
   // ---------- 場面クイズ ----------
@@ -507,11 +527,13 @@
   function viewFav() {
     var gs = fav.filter(function (k) { return k.indexOf("g:") === 0 && groupById[k.slice(2)]; }).map(function (k) { return k.slice(2); });
     var qs = fav.filter(function (k) { return k.indexOf("q:") === 0 && quizById[k.slice(2)]; }).map(function (k) { return quizById[k.slice(2)]; });
+    var rec = recent.filter(function (id) { return groupById[id]; });
     main.innerHTML = '<h1>お気に入り</h1><p class="sub">カードや問題の ☆ を押すと、ここに並びます（この端末のブラウザにだけ保存されます）。</p>' +
       '<section class="sec"><h2>カード</h2>' + (gs.length ? '<div class="glist">' + gs.map(gcard).join("") + "</div>" : '<p class="empty">まだありません。</p>') + "</section>" +
       '<section class="sec"><h2>場面クイズ</h2>' + (qs.length ? '<div class="glist">' + qs.map(function (q) {
         return '<a class="gcard" href="#quiz/' + esc(q.id) + '"><div class="g-name">' + esc(q.title) + '</div><div class="g-ex">' + esc(groupById[q.group] ? groupById[q.group].name : "") + "</div></a>";
-      }).join("") + "</div>" : '<p class="empty">まだありません。</p>') + "</section>";
+      }).join("") + "</div>" : '<p class="empty">まだありません。</p>') + "</section>" +
+      (rec.length ? '<section class="sec"><h2>最近見たカード</h2><div class="glist">' + rec.map(gcard).join("") + "</div></section>" : "");
   }
 
   // ---------- このアプリについて ----------
@@ -559,12 +581,22 @@
     if (h[0] === "g") { var g = groupById[decodeURIComponent(h[1] || "")]; return g ? "#groups/" + g.field : "#groups"; }
     if (h[0] === "quiz" && h[1]) return "#quiz";
     if (h[0] === "about" && h[1]) return "#about";
+    if (h[0] === "tag") return "#tags";
     return "#home";
   }
   var backBtn = document.getElementById("backBtn");
-  backBtn.addEventListener("click", function () {
+  function goBack() {
     if (visited.length > 1) history.back();
     else location.hash = parentOf((location.hash.slice(1) || "home").split("/"));
+  }
+  backBtn.addEventListener("click", goBack);
+  // ページ下部の「← 前のページ」（ヘッダーの「戻る」と同じ動き。ホーム以外の画面の末尾に置く）
+  function addPageBack() {
+    if (main.querySelector(".page-back")) return;
+    main.insertAdjacentHTML("beforeend", '<p class="page-back"><button type="button" class="btn ghost">← 前のページ</button></p>');
+  }
+  main.addEventListener("click", function (ev) {
+    if (ev.target.closest && ev.target.closest(".page-back button")) goBack();
   });
   function trackBack() {
     var cur = location.hash || "#home";
@@ -576,7 +608,7 @@
   function route() {
     trackBack();
     var h = (location.hash.slice(1) || "home").split("/");
-    var tab = { home: "home", groups: "groups", g: "groups", tag: "home", quiz: "quiz", fav: "fav", select: "home", about: "home" }[h[0]] || "home";
+    var tab = { home: "home", groups: "groups", g: "groups", tag: "home", tags: "home", quiz: "quiz", fav: "fav", select: "home", about: "home" }[h[0]] || "home";
     Array.prototype.forEach.call(document.querySelectorAll(".tabbar a"), function (a) {
       var on = a.getAttribute("data-tab") === tab;
       a.classList.toggle("on", on);
@@ -586,12 +618,14 @@
       case "groups": viewGroups(h[1] ? decodeURIComponent(h[1]) : null); break;
       case "g": viewGroup(decodeURIComponent(h[1] || ""), h[2] ? decodeURIComponent(h[2]) : null); break;
       case "tag": viewTag(decodeURIComponent(h[1] || "")); break;
+      case "tags": viewTags(); break;
       case "select": viewSelect(); break;
       case "quiz": h[1] ? viewQuiz(decodeURIComponent(h[1])) : viewQuizList(); break;
       case "fav": viewFav(); break;
       case "about": viewAbout(h[1] || ""); break;
       default: viewHome();
     }
+    if (!backBtn.hidden) addPageBack();
     if (!(h[0] === "g" && h[2])) window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
   }

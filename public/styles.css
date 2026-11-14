@@ -348,40 +348,79 @@ details.src li { margin: 0 0 6px; word-break: break-all; }
   font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 }
 
-/* ホームの見出し */
+/* ホームの見出し（2026-11-14：濃い帯に。ブランドのみどり → 薬のむらさき） */
+:root { --hero-a: #0a7466; --hero-b: #4b3aa6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --hero-a: #0d4d45; --hero-b: #33296e; } }
+:root[data-theme="dark"] { --hero-a: #0d4d45; --hero-b: #33296e; }
 .hero {
-  position: relative; overflow: hidden; border-radius: 22px; padding: 18px 18px 16px; margin: 0 0 16px;
+  position: relative; overflow: hidden; isolation: isolate; border-radius: 24px; padding: 24px 20px 20px; margin: 0 0 16px; color: #fff;
   background:
-    radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 55%),
-    radial-gradient(120% 140% at 0% 100%, color-mix(in srgb, var(--brand) 20%, transparent) 0%, transparent 60%),
-    var(--surface);
-  border: 1px solid var(--line); box-shadow: var(--shadow);
+    radial-gradient(90% 120% at 100% 0%, rgba(255, 138, 92, .45) 0%, transparent 55%),
+    linear-gradient(135deg, var(--hero-a), var(--hero-b));
+  box-shadow: 0 6px 24px rgba(40, 30, 80, .18);
 }
-.hero h1 { margin: 2px 0 6px; }
-.hero-kicker { margin: 0; font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: .04em; }
-:root[data-theme="dark"] .hero-kicker { color: var(--accent); }
-.hero-sub { margin: 0 0 12px; color: var(--ink-2); font-size: 14.5px; }
-.hero-sub b { color: var(--rehab); }
-.hero-chips { display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; }
-.hc { border-radius: 999px; padding: 4px 9px; font-size: 12.5px; font-weight: 700; border: 1.5px solid; white-space: nowrap; }
-.hc.drug { color: var(--drug); background: var(--drug-soft); border-color: var(--drug); }
-.hc.body { color: var(--body); background: var(--body-soft); border-color: var(--body); }
-.hc.rehab { color: var(--rehab); background: var(--rehab-soft); border-color: var(--rehab); }
-.hc-arrow { color: var(--ink-3); font-weight: 800; }
+.hero::after { /* 薬のカプセルをうっすら */
+  content: "💊"; position: absolute; z-index: -1; right: -6px; top: -14px; font-size: 120px; line-height: 1; opacity: .16; transform: rotate(-20deg);
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+.eyebrow { margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #ffd2bf; }
+.hero h1 { font-size: 28px; line-height: 1.3; margin: 8px 0 10px; font-weight: 800; color: #fff; }
+.hero-sub { margin: 0 0 12px; color: rgba(255, 255, 255, .86); font-size: 14px; max-width: 28em; }
+.hero-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.hc { border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; background: rgba(255, 255, 255, .92); border: 0; }
+.hc.drug { color: #5a3cc4; }
+.hc.body { color: #c24f1a; }
+.hc.rehab { color: #08715f; }
+.hc-arrow { color: rgba(255, 255, 255, .75); font-weight: 800; }
+.hero-stats { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 16px; font-size: 12px; color: rgba(255, 255, 255, .8); }
+.hero-stats b { display: block; font-size: 20px; color: #fff; font-variant-numeric: tabular-nums; }
 
-/* 分野チップ（ホーム） */
-.fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
-.fchip {
-  display: flex; align-items: center; padding: 10px 12px; border-radius: 14px; text-decoration: none; color: var(--ink); font-weight: 700; font-size: 14.5px;
-  background: var(--surface); border: 1px solid var(--line); border-bottom: 3px solid var(--fc); box-shadow: var(--shadow);
+/* 最近見たカード・お気に入りへの一行 */
+.memory-link {
+  display: flex; align-items: center; gap: 8px; margin: 12px 0 0; padding: 10px 14px; border-radius: 14px; text-decoration: none; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); font-size: 14px; font-weight: 700;
 }
-.fchip:hover { background: var(--fc-soft); }
+.memory-link svg { width: 18px; height: 18px; fill: #f5b400; stroke: #c98a00; stroke-width: 1.2; flex: none; }
+.memory-link span:first-of-type { flex: 1; }
+.memory-link .chev { color: var(--ink-3); font-size: 20px; }
+
+/* 入口のカード（分野・症状・クイズ・お気に入り）。スマホ2列、広い画面3列 */
+.entry { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.entry-card {
+  position: relative; display: flex; flex-direction: column; gap: 2px; min-height: 118px; padding: 14px 14px 12px;
+  border-radius: var(--radius); text-decoration: none; color: var(--ink);
+  background: linear-gradient(160deg, var(--fc-soft, var(--accent-soft)), var(--surface) 65%);
+  border: 1px solid var(--line); border-bottom: 3px solid var(--fc, var(--brand)); box-shadow: var(--shadow);
+  transition: transform .18s, box-shadow .18s;
+}
+.entry-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(60, 40, 20, .12); }
+.entry-card:active { transform: scale(.98); }
+.entry-icon {
+  display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 8px; border-radius: 13px; font-size: 22px; line-height: 1;
+  background: var(--fc, var(--brand)); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35);
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+.entry-title { font-weight: 800; font-size: 16px; }
+.entry-sub { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+.e-symptom { --fc: var(--rehab); --fc-soft: var(--rehab-soft); }
+.e-quiz { --fc: var(--accent); --fc-soft: var(--accent-soft); }
+.e-fav { --fc: #f5b400; --fc-soft: #fff6d6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .e-fav { --fc: #d9a21a; --fc-soft: #3a2f12; } }
+:root[data-theme="dark"] .e-fav { --fc: #d9a21a; --fc-soft: #3a2f12; }
+/* 2列のとき、数が奇数なら最後の1枚を横いっぱいに */
+@media (max-width: 719px) {
+  .entry-many > .entry-card:last-child:nth-child(odd) { grid-column: 1 / -1; min-height: 0; }
+}
+@media (min-width: 720px) {
+  .entry-many { grid-template-columns: repeat(3, 1fr); }
+  .hero { padding: 32px 30px 26px; }
+  .hero h1 { font-size: 34px; }
+}
 
 /* 群カード：左に分野の色 */
 .gcard { position: relative; border-left: 5px solid var(--fc, var(--brand)); border-radius: 14px; }
 .gcard .g-name { display: flex; align-items: center; }
 .gcard:hover { border-color: var(--fc, var(--brand)); background: color-mix(in srgb, var(--fc, var(--brand)) 5%, var(--surface)); }
-.gcard.quizcard { --fc: var(--accent); --fc-soft: var(--accent-soft); background: linear-gradient(135deg, var(--accent-soft), var(--surface) 70%); }
 
 /* 薬効群一覧の見出し */
 .field h2 { color: var(--ink); font-size: 16px; letter-spacing: 0; }
@@ -427,7 +466,7 @@ details.src li { margin: 0 0 6px; word-break: break-all; }
 
 /* ホームの最下部の「生成AIで作成。」の案内と、このアプリについての共有用の説明文 */
 .home-foot { margin: 28px 0 8px; padding-top: 10px; border-top: 1px solid var(--line); font-size: .8rem; color: var(--ink-3); text-align: center; }
-.home-foot a { color: var(--ink-2); }
+.home-foot a { color: var(--ink-2); margin: 0 6px; }
 .share-copy { display: grid; gap: 8px; justify-items: start; }
 .share-copy textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 13.5px; line-height: 1.6; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; resize: vertical; }
 
@@ -435,11 +474,14 @@ details.src li { margin: 0 0 6px; word-break: break-all; }
 .tb-left { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .tb-left .brand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .backbtn {
-  display: inline-flex; align-items: center; gap: 2px; flex: none; height: 36px; padding: 0 10px 0 4px; margin-left: -6px;
-  border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 2px; flex: none; min-height: 44px; padding: 0 14px 0 6px; margin-left: -6px;
+  border: 2px solid var(--brand); border-radius: 999px; background: var(--brand-soft); color: var(--brand); font: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
 }
-.backbtn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.backbtn:hover { border-color: var(--brand); color: var(--brand); }
+.backbtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.backbtn:hover { background: var(--brand); color: var(--brand-ink); }
+/* ページ下部の「← 前のページ」 */
+.page-back { margin: 22px 0 4px; }
+.page-back .btn { min-width: 160px; font-size: 15px; }
 /* 狭い画面では戻るボタンが出ているあいだ、アプリ名のアイコンだけにして幅をあける */
 @media (max-width: 420px) {
   .backbtn:not([hidden]) + .brand span { display: none; }
